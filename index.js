@@ -3,6 +3,7 @@
 const { spawn } = require('child_process');
 const debug = require('debug')('docker-compose-js');
 const Promise = require('bluebird');
+const path = require('path');
 
 module.exports = function compose(composeFile) {
     function run(command, options = {}, services, param1) {
@@ -46,7 +47,9 @@ module.exports = function compose(composeFile) {
             // Some commands support an additional parameter
             if (param1) args.push(param1);
             debug('docker-compose', args);
-            const cmd = spawn('docker-compose', args);
+            const cmd = spawn('docker-compose', args,{
+                cwd:path.dirname(composeFile)
+            });
 
             cmd.stdout.on('data', (data) => {
                 debug('stdout', data.toString());
